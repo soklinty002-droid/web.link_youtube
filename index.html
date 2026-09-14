@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAM_AHROM_MEDIA</title>
+
+    <!-- Google Font (Khmer) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #ff0000;
+            --primary-hover: #cc0000;
+            --bg-color: #0f0f0f;
+            --card-bg: #1f1f1f;
+            --text-color: #ffffff;
+            --text-secondary: #aaa;
+            --border-radius: 12px;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kantumruy Pro', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding-bottom: 60px;
+        }
+
+        /* ----------------------------------
+           1. WELCOME OVERLAY
+        ---------------------------------- */
+        #welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #2a0808 0%, #0f0f0f 100%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        #welcome-overlay.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .welcome-btn {
+            margin-top: 25px;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(45deg, #ff0000, #ff5555);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            animation: pulse 2s infinite;
+            transition: transform 0.2s ease;
+        }
+
+        .welcome-btn:hover {
+            transform: scale(1.08);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 0, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+        }
+
+        /* ----------------------------------
+           2. SOUND CONTROLLER BUTTON
+        ---------------------------------- */
+        .sound-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(255, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transition: var(--transition);
+        }
+
+        .sound-control:hover {
+            background: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        /* ----------------------------------
+           3. HEADER & SECTION BANNERS (ប្រអប់វែង)
+        ---------------------------------- */
+        header {
+            text-align: center;
+            padding: 50px 20px 30px;
+            background: linear-gradient(180deg, rgba(255,0,0,0.2) 0%, rgba(15,15,15,1) 100%);
+            animation: fadeInDown 1s ease forwards;
+        }
+
+        header h1 {
+            font-size: 2.3rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255,0,0,0.3);
+        }
+
+        header p {
+            color: var(--text-secondary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ប្រអប់វែងបែងចែកប្រភេទ (Category Banner) */
+        .category-banner {
+            background: linear-gradient(90deg, #2a0808 0%, #1f1f1f 100%);
+            border-left: 5px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 40px 0 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .category-banner h2 {
+            font-size: 1.4rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-banner .sub-text {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Grid Layout */
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        /* ----------------------------------
+           4. CARD STYLES & ANIMATIONS
+        ---------------------------------- */
+        .media-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            border: 1px solid #333;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .media-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(255, 0, 0, 0.3);
+            border-color: var(--primary-color);
+        }
+
+        .thumbnail-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            overflow: hidden;
+        }
+
+        .thumbnail-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .media-card:hover .thumbnail-wrapper img {
+            transform: scale(1.1) rotate(1deg);
+        }
+
+        .category-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .card-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        .btn-watch {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-watch:hover {
+            background-color: var(--primary-hover);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-watch svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 50px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid #222;
+        }
+
+        /* Keyframes Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .media-grid { grid-template-columns: 1fr; }
+            .category-banner { flex-direction: column; align-items: flex-start; gap: 5px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- OVERLAY SCREEN -->
+    <div id="welcome-overlay">
+        <h1>🎸 ស្វាគមន៍មកកាន់គេហទំព័រ TAM_AHROM_WEB</h1>
+        <p>សូមចុចប៊ូតុងខាងក្រោមដើម្បីចូលទស្សនា និងស្តាប់បទភ្លេង</p>
+        <button class="welcome-btn" onclick="enterSite()">🎧 ចូលទៅកាន់ Website</button>
+    </div>
+
+    <!-- AUDIO ELEMENT -->
+    <audio id="bg-music" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=cinematic-time-115682.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- FLOATING SOUND BUTTON -->
+    <button class="sound-control" onclick="toggleSound()">
+        <span id="sound-icon">♬</span>
+        <span id="sound-text">សំឡេង: បើក</span>
+    </button>
+
+    <!-- Header Section -->
+    <header>
+        <h1>🎧 MENU</h1>
+        <p>ជ្រើសរើសរឿង និងបទចម្រៀងដែលអ្នកចូលចិត្តដើម្បីទស្សនាលើ YouTube</p>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="container">
+
+        <!-- ==========================================
+             ផ្នែកទី ១: បទចម្រៀង (CATEGORY 1 BANNER)
+        ========================================== -->
+        <div class="category-banner">
+            <h2>🎧  SADDDDD_VIBES</h2>
+            <span class="sub-text">ប្រមូលផ្តុំ MV និងបទចម្រៀងថ្មីៗ</span>
+        </div>
+
+        <section class="media-grid">
+            <!-- Card 1 -->
+            <article class="media-card" style="animation-delay: 0.2s;">
+                <div class="thumbnail-wrapper">
+                    <span class="category-badge">ចម្រៀង</span>
+                    <img src="D:\TSL\website.youtube\images chen.jpg" alt="រូបភាព 1">
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">CHEN_ចេន</h3>
+                    <p class="card-desc">ស្តាប់ការបកស្រាយបទចម្រៀងយ៉ាងពិរោះ និង ជូតទឹកភ្នែកតាមសម្រួល។</p>
+                    <a href="https://youtu.be/abECUpyIgUE" target="_blank" rel="noopener noreferrer" class="btn-watch">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> ទស្សនាលើ YouTube
+                    </a>
+                </div>
+            </article>
+
+            <!-- Card 2 -->
+            <article class="media-card" style="animation-delay: 0.4s;">
+                <div class="thumbnail-wrapper">
+                    <span class="category-badge">ចម្រៀង</span>
+                    <img src="D:\TSL\website.youtube\images (1).jpg" alt="រូបភាព 2">
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">SULY_PHENG</h3>
+                    <p class="card-desc">ជូតទឹកភ្នែកតាមសម្រួល សម្រួលអារម្មណ៍នាពេលរាត្រី។</p>
+                    <a href="https://youtu.be/LFitf9bhzNQ" target="_blank" rel="noopener noreferrer" class="btn-watch">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> ទស្សនាលើ YouTube
+                    </a>
+                </div>
+            </article>
+
+            <!-- Card 3 -->
+            <article class="media-card" style="animation-delay: 0.6s;">
+                <div class="thumbnail-wrapper">
+                    <span class="category-badge">ចម្រៀង</span>
+                    <img src="D:\TSL\website.youtube\mann doss.jpg" alt="រូបភាព 3">
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">Top Hits Music Video</h3>
+                    <p class="card-desc">សម្រាប់អ្នកចង់ sad បែបកាលីប</p>
+                    <a href="https://youtu.be/GDlkf0m4AjA" target="_blank" rel="noopener noreferrer" class="btn-watch">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> ទស្សនាលើ YouTube
+                    </a>
+                </div>
+            </article>
+        </section>
+
+
+        <!-- ==========================================
+             ផ្នែកទី ២: រឿងភាគ និង Trailer (CATEGORY 2 BANNER)
+        ========================================== -->
+        <div class="category-banner">
+            <h2>🎧 CHILL VIBES</h2>
+            <span class="sub-text">សម្រាប់អ្នកចង់ CHILL មួយទំហឹង</span>
+        </div>
+
+        <section class="media-grid">
+            <!-- Card 4 -->
+            <article class="media-card" style="animation-delay: 0.8s;">
+                <div class="thumbnail-wrapper">
+                    <span class="category-badge">ចម្រៀង</span>
+                    <img src="D:\TSL\website.youtube\រូបថតអេក្រង់ 2026-09-15 002846.png" alt="រូបភាព 4">
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">WAY YOU ARE X MY សង្សារ​ </h3>
+                    <p class="card-desc">X នារី​ HIGH SHOW V2 X នឺកបងទេ?</p>
+                    <a href="https://youtu.be/flFnVGiY8sU" target="_blank" rel="noopener noreferrer" class="btn-watch">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> ទស្សនាលើ YouTube
+                    </a>
+                </div>
+            </article>
+
+            <!-- Card 5 -->
+            <article class="media-card" style="animation-delay: 1.0s;">
+                <div class="thumbnail-wrapper">
+                    <span class="category-badge">ចម្រៀង</span>
+                    <img src="D:\TSL\website.youtube\រូបថតអេក្រង់ 2026-09-15 003356.png" alt="រូបភាព 5">
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">SNEHA x ERA x My Only </h3>
+                    <p class="card-desc">x Only You Mush up</p>
+                    <a href="https://youtu.be/8hakByn72Bs" target="_blank" rel="noopener noreferrer" class="btn-watch">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> ទស្សនាលើ YouTube
+                    </a>
+                </div>
+            </article>
+
+            <!-- Card 6 -->
+            <article class="media-card" style="animation-delay: 1.2s;">
+                <div class="thumbnail-wrapper">
+                    <span class="category-badge">ចម្រៀង</span>
+                    <img src="D:\TSL\website.youtube\jadyy.jpg" alt="រូបភាព 6">
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">JADY BEST SONGS COLLECTION 2026</h3>
+                    <p class="card-desc">WAY YOU ARE · MOONLIGHT · TRIT TRIT · SREY NA · STAR · LOST · OUN</p>
+                    <a href="https://youtu.be/KU2EWnPTrzk" target="_blank" rel="noopener noreferrer" class="btn-watch">
+                        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> ទស្សនាលើ YouTube
+                    </a>
+                </div>
+            </article>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 រក្សាសិទ្ធិគ្រប់យ៉ាង | Assignment Website_by soklinty</p>
+    </footer>
+
+    <!-- JAVASCRIPT CONTROL -->
+    <script>
+        const audio = document.getElementById('bg-music');
+        const overlay = document.getElementById('welcome-overlay');
+        const soundIcon = document.getElementById('sound-icon');
+        const soundText = document.getElementById('sound-text');
+
+        audio.volume = 0.3; 
+
+        function enterSite() {
+            overlay.classList.add('fade-out');
+            audio.play().catch(error => {
+                console.log("Autoplay issue: ", error);
+            });
+        }
+
+        function toggleSound() {
+            if (audio.paused) {
+                audio.play();
+                soundIcon.textContent = "🔊";
+                soundText.textContent = "សំឡេង: បើក";
+            } else {
+                audio.pause();
+                soundIcon.textContent = "🔈";
+                soundText.textContent = "សំឡេង: បិទ";
+            }
+        }
+    </script>
+</body>
+</html>
